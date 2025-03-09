@@ -127,6 +127,7 @@ struct RecordFunction;
  */
 class TORCH_API RecordFunctionCallback {
  public:
+  // NOTE 为什么start回调是unique_ptr，而end回调是普通函数指针
   using StartCallback =
       std::unique_ptr<ObserverContext> (*)(const RecordFunction&);
   using EndCallback = void (*)(const RecordFunction&, ObserverContext*);
@@ -137,7 +138,7 @@ class TORCH_API RecordFunctionCallback {
       StartCallback start,
       EndCallback end = nullptr)
       : start_(start), end_(end) {
-    scopes_.fill(true);
+    scopes_.fill(true); // 所有scope都设置为true
   }
 
   RecordFunctionCallback& needsInputs(bool needs_inputs) {

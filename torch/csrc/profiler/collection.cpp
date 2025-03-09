@@ -673,7 +673,9 @@ ThreadLocalSubqueue::ThreadLocalSubqueue(
     : tid_{tid},
       config_{std::move(config)},
       kineto_info_{kineto::kineto_ids()} {
+  // NOTE 为什么要调用kineto
   torch::profiler::impl::kineto::recordThreadInfo();
+  // NOTE 为什么这里有perf
   if (!config_.experimental_config.performance_events.empty()) {
     perf_profiler_ =
         std::make_unique<torch::profiler::impl::linux_perf::PerfProfiler>();

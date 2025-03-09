@@ -148,14 +148,18 @@ struct TORCH_API ProfilerStateBase : public c10::MemoryReportingInfoBase {
   ProfilerStateBase& operator=(ProfilerStateBase&&) = delete;
   ~ProfilerStateBase() override;
 
+  // global为true时，返回全局ProfilerStateBase，否则返回当前线程的ProfilerStateBase
   static ProfilerStateBase* get(bool global);
+  // 先从全局ProfilerStateBase中获取，如果全局ProfilerStateBase为空，则从当前线程的ProfilerStateBase中获取
   static ProfilerStateBase* get() {
     auto* out = get(/*global=*/true);
     return out ? out : get(/*global=*/false);
   }
 
+  // 根据state中的config, 设置state到全局ProfilerStateBase或当前线程的ProfilerStateBase
   static void push(std::shared_ptr<ProfilerStateBase>&& state);
 
+  // 与get类似, 支持作用相反
   static std::shared_ptr<ProfilerStateBase> pop(bool global);
   static std::shared_ptr<ProfilerStateBase> pop() {
     auto out = pop(/*global=*/true);
@@ -166,6 +170,7 @@ struct TORCH_API ProfilerStateBase : public c10::MemoryReportingInfoBase {
     return config_;
   }
 
+  // NOTE 为什么只能设置一个callback?
   void setCallbackHandle(at::CallbackHandle handle);
   void removeCallback();
 

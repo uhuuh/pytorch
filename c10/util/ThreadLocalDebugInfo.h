@@ -31,6 +31,7 @@ class C10_API DebugInfoBase {
 // (e.g. to the operator observers used for debugging, logging,
 // profiling, etc)
 class C10_API ThreadLocalDebugInfo {
+// 多个ThreadLocalDebugInfo以栈的形式组织在一起
  public:
   static DebugInfoBase* get(DebugInfoKind kind);
 
@@ -65,6 +66,7 @@ class C10_API ThreadLocalDebugInfo {
 // restoring the original values after exiting the scope.
 // Users can access the values through the ThreadLocalDebugInfo::get() call;
 class C10_API DebugInfoGuard {
+// RAII方式保护ThreadLocalDebugInfo进栈和出栈
  public:
   DebugInfoGuard(DebugInfoKind kind, std::shared_ptr<DebugInfoBase> info);
 
@@ -72,6 +74,7 @@ class C10_API DebugInfoGuard {
 
   ~DebugInfoGuard();
 
+  // NOTE 为什么要这样做, guard对象都应该这样做吗?
   DebugInfoGuard(const DebugInfoGuard&) = delete;
   DebugInfoGuard(DebugInfoGuard&&) = delete;
   DebugInfoGuard& operator=(const DebugInfoGuard&) = delete;

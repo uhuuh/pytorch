@@ -347,7 +347,7 @@ struct KinetoThreadLocalState : public ProfilerStateBase {
     TORCH_INTERNAL_ASSERT_DEBUG_ONLY(
         state == nullptr ||
         state->profilerType() == ActiveProfilerType::KINETO);
-    return static_cast<KinetoThreadLocalState*>(state);
+    return static_cast<KinetoThreadLocalState*>(state); // NOTE 向下转型为什么不用dynamic_cast?
   }
 
   ActiveProfilerType profilerType() override {
@@ -548,6 +548,7 @@ void pushProfilingCallbacks(const std::unordered_set<at::RecordScope>& scopes) {
           .needsInputs(registration_state_ptr->config().report_input_shapes)
           .scopes(scopes);
 
+  // NOTE 为什么要包一层addGlobalCallback
   if constexpr (use_global_callback) {
     registration_state_ptr->setCallbackHandle(
         at::addGlobalCallback(recordFunctionCallback));

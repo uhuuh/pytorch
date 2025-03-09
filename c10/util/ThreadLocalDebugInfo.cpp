@@ -6,6 +6,7 @@
 
 namespace c10 {
 
+// 定义了一个线程局部对象 tls_debug_info
 C10_DEFINE_TLS_static(std::shared_ptr<ThreadLocalDebugInfo>, tls_debug_info);
 #define debug_info (tls_debug_info.get())
 
